@@ -6,7 +6,7 @@ const display = document.querySelector(".display")
 let currentInput = "0";
 let previousInput = null;
 let operator = null;
-let shouldResetDisplay = false;
+let waitingForNewInput = false;
 
 function calButton (text,className= [], action){
     const button = document.createElement("button")
@@ -16,26 +16,28 @@ function calButton (text,className= [], action){
     return button
 }
 
+function updateDisplay() {
+    display.textContent = currentInput;
+}
+
 function calculate(num1, num2, op) {
     switch(op) {
         case "+":
-            display.textContent = (num1, num2)=> num1 + num2;
-            break;
+            return num1 + num2;
+
         case "-":
-            display.textContent = (num1, num2) => num1 - num2;
-            break;
+            return num1 - num2;
+            
         case "x":
-            display.textContent = (num1, num2) => num1 * num2;
-            break;
+            return num1 * num2;
+            
         case "/":
-            display.textContent = (num1, num2) => {
-                if(num2 === 0){
-                    return NaN
-                }
-                return num1 / num2
-            };
-            break;
+            if(num2 === 0){
+                return NaN
+            }
+            return num1 / num2;
+            
         default:
-            display.textContent = "0"
+            return 0
     }
 }

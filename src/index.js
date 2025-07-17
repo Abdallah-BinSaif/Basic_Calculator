@@ -1,5 +1,9 @@
 clearSection.appendChild(calButton(text="AC", className=["w-full", "bg-red-900/80", "text-white", "font-bold"],(e)=>{
-    display.textContent = "0"
+    currentInput = "0";
+    previousInput = null;
+    operator = null;
+    waitingForNewInput = false;
+    updateDisplay()
 }))
 
 // numbers
@@ -7,59 +11,53 @@ const numArr = ["7","8","9","4","5","6","1","2","3","0","00","."]
 numArr.map(item=>{
     numbers.appendChild(calButton(text=`${item}`,[], (e)=>{
         
-        // taking the button's number
-        const number = e.target.textContent
-        
-        // take number not more than 17
-        if(display.textContent.length < 17) {
-            if(display.textContent=== "0"){
-                display.textContent = number
+        if(waitingForNewInput) {
+            currentInput = item
+            waitingForNewInput = false
+        }else{
+            if(item === "." && currentInput.includes(".")){
+                return;
+            }
+            if (currentInput === "0" && item != ".") {
+                currentInput = item;
             }else{
-                display.textContent += number
+                currentInput += item;
             }
         }
+        updateDisplay();
+        
     }))
 })
 
 //operation
 const opArr = ["/", "x", "-", "+"]
-opArr.map(item=>operations.appendChild(calButton(text=`${item}`,[],(e)=>{
-    
-    // take operator from button
-    const op = e.target.textContent
-    const currentInput = parseFloat(display.textContent)
+opArr.map(item=>operations.appendChild(calButton(text=`${item}`,[],()=>{
 
-    // if(previousInput && op){
-    //     previousInput += currentInput
-    // }
-
-    // if operator already included
-    const isOpInclude = ["x", "+", "-", "/"].some(item=> display.textContent.includes(item))
-    if(number === 0 || isOpInclude){
-        return
+    if(previousInput !== null && operator !== null && !waitingForNewInput){
+        const result = calculate(parseFloat(previousInput), parseFloat(currentInput), operator)
+        if(isNaN(result)){
+            currentInput = "ERROR";
+            previousInput = null;
+            operator = null;
+            waitingForNewInput = true;
+            updateDisplay()
+            return
+        }
+        currentInput = result.toString()
+        previousInput = currentInput
     }else{
-        display.textContent += op
+        previousInput = currentInput;
     }
+    operator = item;
+    waitingForNewInput = true
+    updateDisplay()
 })))
 
 operations.appendChild(calButton(text="=",[],(event)=>{
-    // split disply values with operator
-    const displayText = display.textContent.split(/[+\-x/]/);
-    if(displayText.length < 2 && parseInt(displayText[0]) > 0){
-        return
-    }
 
-    // extract oprerator from display
-    const operator = display.textContent.match(/[+\-x/]/)[0];
-    const num1 = parseFloat(displayText[0])
-    const num2 = parseFloat(displayText[1])
-
-    // if any number is not a number display 0
-    if(isNaN(num1) || isNaN(num2)) {
-        display.textContent = "0"
-        return
-    }
-
-    // arithmathic operations
-    calculate(operator, num1, num2)
+    currentInput = calculate(parseFloat(previousInput), parseFloat(currentInput), operator).toString()
+    previousInput = currentInput;
+    operator = null;
+    waitingForNewInput = true;
+    updateDisplay()
 }))

@@ -9,10 +9,9 @@
 <body class="flex flex-col items-center">
     <h1 class="text-5xl font-bold">Calculator</h1>
     <div class="border w-xs shadow-2xl rounded-lg p-2">
-        <form>
-            <label for="screen">fx</label>
-            <input class="border w-full rounded-xl p-4 text-left" type="text" id="screen" name="screen"/>
-        </form>
+        <section class="h-[60px] flex items-center">
+            <p class="display border w-full rounded-lg py-1 text-3xl text-right pr-2">0</p>
+        </section>
         <div class="buttons-container w-full mt-4 grid grid-cols-4 gap-2">
             
             <!-- Clear -->
@@ -37,6 +36,7 @@
             
         </div>
     </div>
+    <script src="./variableFuctions.js"></script>
     <script src="./index.js"></script>
 </body>
 </html>
